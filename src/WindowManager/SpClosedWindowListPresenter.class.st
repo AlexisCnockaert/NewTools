@@ -123,7 +123,7 @@ SpClosedWindowListPresenter >> items [
 
 { #category : 'private' }
 SpClosedWindowListPresenter >> items: anItemList [
-	list items: anItemList.
+	(list items: anItemList) whenActivatedDo: [ :selection | unhideItemBlock cull: selection selectedItem ]
 ]
 
 { #category : 'accessing' }
