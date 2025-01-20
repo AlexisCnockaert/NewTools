@@ -67,12 +67,6 @@ SpClosedWindowListPresenter >> connectPresenters [
 			removeItemBlock cull: self selectedItem ] ]
 ]
 
-{ #category : 'api' }
-SpClosedWindowListPresenter >> display: aBlock [
-
-	list display: aBlock
-]
-
 { #category : 'initialization' }
 SpClosedWindowListPresenter >> initialize [
 
