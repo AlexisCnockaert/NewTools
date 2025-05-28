@@ -25,7 +25,7 @@ CavPopUpStrategy >> findSameKindWindowAs: aWidget [
 								  (each model presenter
 									   ifNotNil: [ each model presenter class = aWidget class ]
 									   ifNil: [ each model class = aWidget class ]) and: [
-									  each ~= aWidget ] ] ] ]
+									  each ~= aWidget ] ] ] ] 
 		  ifNone: [ ^ nil ]
 ]
 
