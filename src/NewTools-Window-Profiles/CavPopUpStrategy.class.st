@@ -18,7 +18,7 @@ CavPopUpStrategy class >> title [
 { #category : 'finding/searching' }
 CavPopUpStrategy >> findSameKindWindowAs: aWidget [
 
-	^ World submorphs
+	^ World submorphs 
 		  detect: [ :each |
 				  each isSystemWindow and: [
 						  each model notNil and: [
