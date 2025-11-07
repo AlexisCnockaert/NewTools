@@ -281,7 +281,14 @@ StDependencyTreePresenter >> initializePresenters [
 						action
 							name: 'Browse dependencies from class';
 							actionEnabled: [ self areClassToDependencyNodes: self selectedItemsFromTree ];
-							action: [ self openTreeFor: self selectedNames ] ] ]
+							action: [ self openTreeFor: self selectedNames ] ];
+				addActionWith: [ :action |
+						action
+							name: 'Select this package as the right dependency';
+							actionEnabled: [ self areMethodNodes: self selectedItemsFromTree ];
+							action: [
+									(TheManifestBuilder of: self selectedItemsFromTree first packageUnderAnalysis packageManifest)
+										addManuallyResolvedDependency: self selectedItemsFromTree first content package name ] ] ]
 ]
 
 { #category : 'accessing' }
