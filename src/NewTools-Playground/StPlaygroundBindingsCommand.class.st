@@ -33,7 +33,7 @@ StPlaygroundBindingsCommand class >> order [
 	^ 10
 ]
 
-{ #category : 'execution' }
+{ #category : 'executing' }
 StPlaygroundBindingsCommand >> execute [ 
 
 	(StPlaygroundBindingsPresenter 

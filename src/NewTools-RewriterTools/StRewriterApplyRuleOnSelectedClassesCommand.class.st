@@ -35,17 +35,19 @@ StRewriterApplyRuleOnSelectedClassesCommand >> execute [
 	| dialogWindow changes |
 	dialogWindow := self context scopeSelectorPresenter openDialog.
 	dialogWindow okAction: [
-		| ruleHolder |
-		ruleHolder := StRewriterRuleHolder
-			lhs: self context lhs
-			rhs: self context rhs
-			isForMethod: self context isRuleForMethod.
+			| ruleHolder |
+			ruleHolder := StRewriterRuleHolder
+				              lhs: self context lhs
+				              rhs: self context rhs
+				              isForMethod: self context isRuleForMethod.
 
-		changes := StRewriterAbstractApplier defaultEngineApplier
-			calculateChangesForClasses: self context scopeSelectorPresenter selectedClasses
-			transformationRules: (OrderedCollection with: ruleHolder).
+			changes := StRewriterAbstractApplier defaultEngineApplier
+				           calculateChangesForClasses:
+				           self context scopeSelectorPresenter selectedClasses
+				           transformationRules:
+				           (OrderedCollection with: ruleHolder).
 
-		(StChangesBrowserPresenter
-			newApplication: self application
-			model: changes) open ]
+			((self application toolNamed: #changesBrowser)
+				 newApplication: self application
+				 model: changes) open ]
 ]

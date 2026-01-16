@@ -36,6 +36,7 @@ StFinderExampleResult >> displayString [
 { #category : 'private' }
 StFinderExampleResult >> forFinderPreview: aSpCodePresenter [ 
 
+	acceptTextCallback := nil.
 	^ String empty
 ]
 

@@ -37,7 +37,8 @@ StFinderTraitResult >> forFinderPreview: aSpCodePresenter [
 	^ self parent
 		  ifNotNil: [ self displaySource: self getCompiledMethod in: aSpCodePresenter ]
 		  ifNil: [
-			  aSpCodePresenter
-				  beForScripting;
-				  text: self content definitionString ]
+				  acceptTextCallback := nil.
+				  aSpCodePresenter
+					  beForScripting;
+					  text: self content definitionString ]
 ]

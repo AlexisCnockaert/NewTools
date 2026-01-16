@@ -5,32 +5,30 @@ Class {
 		'model'
 	],
 	#classVars : [
-		'Bookmarks',
-		'LastVisitedDirectory'
+		'Bookmarks'
 	],
 	#category : 'NewTools-FileBrowser-UI',
 	#package : 'NewTools-FileBrowser',
 	#tag : 'UI'
 }
 
-{ #category : 'world menu' }
-StFileBrowserAbstractPresenter class >> menuFileSystemBrowserCommandOn: aBuilder [
-	<worldMenu>
+{ #category : 'instance creation' }
+StFileBrowserAbstractPresenter class >> defaultModel [
 
-	(aBuilder item: #NewFileBrowser)
-		parent: #NewToolsMenu;	
-		action: [ StFileSystemPresenter open ];
-		label: 'New File Browser';
-		order: 1; 
-		help: 'Open the new File Browser.';
-		iconName: #smallOpen.
-
+	^ StFileSystemModel new
 ]
 
-{ #category : 'instance creation' }
-StFileBrowserAbstractPresenter class >> new [
+{ #category : 'world menu' }
+StFileBrowserAbstractPresenter class >> menuFileSystemBrowserCommandOn: aBuilder [
 
-	^ self on: StFileSystemModel new
+	<worldMenu>
+	(aBuilder item: #NewFileBrowser)
+		parent: #System;
+		action: [ StFileSystemPresenter open ];
+		label: 'File Browser';
+		order: 1;
+		help: 'Open the File Browser.';
+		iconName: #smallOpen
 ]
 
 { #category : 'instance creation' }
@@ -100,7 +98,7 @@ StFileBrowserAbstractPresenter >> defaultColumns [
 StFileBrowserAbstractPresenter >> defaultDirectory [
 	"See class side comment"
 
-	^ self model defaultDirectory.
+	^ self model defaultDirectory
 ]
 
 { #category : 'accessing - history' }
@@ -113,6 +111,13 @@ StFileBrowserAbstractPresenter >> history [
 StFileBrowserAbstractPresenter >> history: aConfigurableHistoryIterator [ 
 
 	self model history: aConfigurableHistoryIterator.
+]
+
+{ #category : 'initialization' }
+StFileBrowserAbstractPresenter >> initialize [
+
+	model ifNil: [ self setModelBeforeInitialization: self class defaultModel ].
+	super initialize
 ]
 
 { #category : 'accessing - history' }
@@ -144,6 +149,11 @@ StFileBrowserAbstractPresenter >> model [
 StFileBrowserAbstractPresenter >> navigationSystemClass [
 
 	^ self class navigationSystemClass
+]
+
+{ #category : 'utilities' }
+StFileBrowserAbstractPresenter >> openFolder: aFileReference [ 
+	^ self subclassResponsibility
 ]
 
 { #category : 'utilities' }

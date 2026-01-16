@@ -24,8 +24,7 @@ Class {
 StFileBrowserSettings class >> defaultDirectory [
 	"Modified by settings File Browser self classSide >> #openOnDefaultDirectoryOn: "
 
-	^ DefaultDirectory
-		ifNil: [ DefaultDirectory := FileLocator imageDirectory ]
+	^ DefaultDirectory ifNil: [ DefaultDirectory := FileLocator home ]
 ]
 
 { #category : 'settings' }
@@ -108,8 +107,7 @@ StFileBrowserSettings class >> macTerminalProgramOn: aBuilder [
 StFileBrowserSettings class >> openOnLastDirectory [
 	"Modified by settings File Browser self classSide >> #openOnLastDirectoryOn: "
 
-	^ OpenOnLastDirectory
-		ifNil: [ OpenOnLastDirectory := false ]
+	^ OpenOnLastDirectory ifNil: [ OpenOnLastDirectory := true ]
 ]
 
 { #category : 'settings' }
@@ -121,15 +119,13 @@ StFileBrowserSettings class >> openOnLastDirectory: aBoolean [
 
 { #category : 'settings' }
 StFileBrowserSettings class >> openOnLastDirectoryOn: aBuilder [
-	<systemsettings>
 
+	<systemsettings>
 	(aBuilder setting: #openOnLastDirectory)
 		parent: #fileBrowser;
-		default: true;
 		label: 'Open on last visited directory';
 		description: 'Open a new instance on the last visited directory';
 		target: self
-
 ]
 
 { #category : 'settings' }

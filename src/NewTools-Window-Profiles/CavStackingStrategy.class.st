@@ -20,6 +20,7 @@ CavStackingStrategy class >> title [
 { #category : 'positioning' }
 CavStackingStrategy >> placePresenter: aPresenter [
 
+	super placePresenter: aPresenter.
 	aPresenter extent: placeHolder extent.
 
 	aPresenter position:

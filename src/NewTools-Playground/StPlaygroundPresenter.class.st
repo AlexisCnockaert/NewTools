@@ -47,6 +47,9 @@ See *class:StPlaygroundPagesPresenter*
 Class {
 	#name : 'StPlaygroundPresenter',
 	#superclass : 'StInspectorPresenter',
+	#instVars : [
+		'title'
+	],
 	#classVars : [
 		'CacheDirectory'
 	],
@@ -105,12 +108,6 @@ StPlaygroundPresenter class >> openContents: aString [
 	^ self new
 		contents: aString;
 		open
-]
-
-{ #category : 'instance creation' }
-StPlaygroundPresenter class >> openUrl: anUrl [
-
-	self openContents: (ZnEasy get: anUrl ) contents
 ]
 
 { #category : 'tools registry' }
@@ -173,7 +170,7 @@ StPlaygroundPresenter >> newInspectorFor: aModel [
 	^ inspector
 ]
 
-{ #category : 'accessing' }
+{ #category : 'actions' }
 StPlaygroundPresenter >> page [
 
 	^ self firstPage page
@@ -206,5 +203,12 @@ StPlaygroundPresenter >> windowIcon [
 { #category : 'initialization' }
 StPlaygroundPresenter >> windowTitle [
 
-	^ 'Playground'
+	^ title ifNil: [ ^ 'Playground' ]
+]
+
+{ #category : 'accessing' }
+StPlaygroundPresenter >> windowTitle: aString [
+
+	title := aString.
+	self update
 ]

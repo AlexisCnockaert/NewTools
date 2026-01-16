@@ -21,15 +21,18 @@ CavReplaceStrategy class >> title [
 { #category : 'positioning' }
 CavReplaceStrategy >> placePresenter: aPresenter [
 
+	super placePresenter: aPresenter.
 	aPresenter position: placeHolder position.
 	aPresenter extent: placeHolder extent.
 	"do we keep a reference to the window from the placeholder?
 	this way we could avoid to scan all the window."
-	
+
 	(SystemWindow allInstances select: [ :each |
-		 each position = placeHolder position 
-			and: [ placeHolder kind = aPresenter class ]]) do: [ :each | each delete ].
-	(SpWindow allInstances select: [ :each |
-		 each position = placeHolder position 
-				and: [ placeHolder kind = aPresenter class ]]) do: [ :each | each delete ]
+			 each position = placeHolder position and: [
+				 placeHolder kind = aPresenter class ] ]) do: [ :each |
+		each delete ].
+	(SpWindowMorph allInstances select: [ :each |
+			 each position = placeHolder position and: [
+				 placeHolder kind = aPresenter class ] ]) do: [ :each |
+		each delete ]
 ]

@@ -33,10 +33,12 @@ CavPopUpStrategy >> findSameKindWindowAs: aWidget [
 CavPopUpStrategy >> placePresenter: aWindow [
 
 	| sameKindWindow windowToDelete |
+	super placePresenter: aWindow.
 	aWindow position: placeHolder position.
 	aWindow extent: placeHolder extent.
 
 	sameKindWindow := self findSameKindWindowAs: aWindow.
+
 	windowToDelete := (aWindow isKindOf: SystemWindow)
 		                  ifTrue: [ aWindow ]
 		                  ifFalse: [ aWindow owner ].

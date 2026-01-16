@@ -26,6 +26,13 @@ StPlaygroundPagesPresenterTest >> initializeMemoryFileSystem: aFileSystem [
 		stream << 'Test 2"' ].
 ]
 
+{ #category : 'running' }
+StPlaygroundPagesPresenterTest >> setUp [ 
+	super setUp.
+
+	presenter initialize.
+]
+
 { #category : 'tests' }
 StPlaygroundPagesPresenterTest >> testLoadPage [
 	| loaded |
@@ -38,4 +45,25 @@ StPlaygroundPagesPresenterTest >> testLoadPage [
 	presenter loadPage: (StPlaygroundPage fromReference: (memoryFileSystem / 'test1.ph')).
 	self deny: presenter window isOpen .
 	self assert: loaded
+]
+
+{ #category : 'tests' }
+StPlaygroundPagesPresenterTest >> testOnLoadPage [
+
+	| ref page|
+
+	self openInstance.
+	
+	ref := 'hello world'.
+	page := self newPage.
+	page contents: ref.
+	page flush.
+	
+	self assert: page contents equals: ref.
+	presenter onLoadPage: [ :pageBlock | pageBlock contents:'test' ; flush ].
+
+	
+	presenter loadPage: page.
+	self deny: page contents equals: ref.
+	self assert: page contents equals: 'test'.
 ]

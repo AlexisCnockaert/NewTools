@@ -9,7 +9,7 @@ It provides the following file system services to UI:
 "
 Class {
 	#name : 'StFileSystemModel',
-	#superclass : 'StPresenter',
+	#superclass : 'Model',
 	#instVars : [
 		'currentDirectory',
 		'history'
@@ -22,6 +22,21 @@ Class {
 	#package : 'NewTools-FileBrowser',
 	#tag : 'UI'
 }
+
+{ #category : 'adding' }
+StFileSystemModel class >> addBookmarkNamed: aString location: aLocation iconName: aName [
+	"Example: `StFileSystemModel addBookmarkNamed: 'pharo' location: FileLocator preferences / 'pharo' iconName: #git`"
+
+	self bookmarks anyOne addBookmark: (StFileBrowserBookmark name: aString location: aLocation icon: (self iconNamed: aName))
+]
+
+{ #category : 'accessing - bookmarks' }
+StFileSystemModel class >> bookmarks [
+
+	^ Bookmarks ifNil: [
+			  self initializeBookmarks.
+			  Bookmarks ]
+]
 
 { #category : 'defaults' }
 StFileSystemModel class >> defaultDirectory [
@@ -64,16 +79,14 @@ StFileSystemModel >> addBookmark: aFileReference [
 StFileSystemModel >> bookmarks [
 	"Answer the receiver's <Collection> of bookmarks, each one an instance of a subclass of <StFileBrowserAbstractBookMark>"
 
-	Bookmarks 
-		ifNil: [ self class initializeBookmarks ].
-	^ Bookmarks
+	^ self class bookmarks
 ]
 
 { #category : 'accessing' }
 StFileSystemModel >> bookmarks: aCollectionOfGroupBookMark [
 	"Set the receiver's global bookmarks to aCollectionOfGroupBookMark"
 
-	Bookmarks := aCollectionOfGroupBookMark asOrderedCollection
+	Bookmarks := aCollectionOfGroupBookMark ifNotNil: [ aCollectionOfGroupBookMark asOrderedCollection ]
 ]
 
 { #category : 'utilities' }

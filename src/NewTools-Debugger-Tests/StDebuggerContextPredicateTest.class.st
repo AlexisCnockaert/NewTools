@@ -51,14 +51,6 @@ StDebuggerContextPredicateTest >> testPrintDescription [
 ]
 
 { #category : 'tests' }
-StDebuggerContextPredicateTest >> testPrintHaltDescription [
-	|haltContext|
-	haltContext := (StTestDebuggerProvider new debuggerWithRunnableContext) interruptedContext.
-	predicate context: haltContext.
-	self assert: predicate printDescription equals: 'Halt in ', haltContext printString
-]
-
-{ #category : 'tests' }
 StDebuggerContextPredicateTest >> testPrintPostMortemDescription [
 	self skip.
 	predicate postMortem: true.

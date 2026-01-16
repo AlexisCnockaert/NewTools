@@ -89,11 +89,11 @@ StPlaygroundPage >> contents [
 { #category : 'accessing' }
 StPlaygroundPage >> contents: aString [
 
-	aString asString trimmed ifEmpty: [ ^ self ].
+	aString asString trimBoth ifEmpty: [ ^ self ].
 	mutex critical: [
-		self basicContents: aString.
-		contentReceived := true.
-		self spawnFlushProcess ]
+			self basicContents: aString.
+			contentReceived := true.
+			self spawnFlushProcess ]
 ]
 
 { #category : 'accessing' }
@@ -141,9 +141,10 @@ StPlaygroundPage >> fileReference [
 { #category : 'accessing' }
 StPlaygroundPage >> firstLine [
 
-	self readStreamDo: [ :stream | | line |
-		[ stream atEnd not and: [ (line := stream nextLine trimmed) isEmpty ] ] whileTrue.
-		line isEmptyOrNil ifFalse: [ ^ line ] ].
+	self readStreamDo: [ :stream |
+			| line |
+			[ stream atEnd not and: [ (line := stream nextLine trimBoth) isEmpty ] ] whileTrue.
+			line isEmptyOrNil ifFalse: [ ^ line ] ].
 
 	^ nil
 ]
@@ -207,6 +208,12 @@ StPlaygroundPage >> readStreamDo: aBlock [
 	^ self fileReference 
 		ifExists: [ :ref | ref readStreamDo: aBlock ]
 		ifAbsent: [ nil ]
+]
+
+{ #category : 'accessing' }
+StPlaygroundPage >> renameTo: aFileName [
+	self fileReference renameTo: aFileName, '.', self class pageExtension.
+	fileName := aFileName
 ]
 
 { #category : 'private' }

@@ -13,8 +13,7 @@ Class {
 		'environmentBar',
 		'searchOptions',
 		'resultStatusBar',
-		'previewSourcePresenter',
-		'configButton'
+		'previewSourcePresenter'
 	],
 	#category : 'NewTools-Finder-Core',
 	#package : 'NewTools-Finder',
@@ -289,24 +288,14 @@ StFinderPresenter >> cleanResults [
 StFinderPresenter >> connectPresenters [
 
 	self connectSearchBar.
-
-	configButton action: [
-		SettingBrowser new
-			rootNodes: (SettingBrowser currentTree nodeNamed: #finder) allChildren;
-			open ].
+	previewSourcePresenter whenSubmitDo: [ :text |
+		resultTree selectedItem ifNotNil: [ :selected | selected acceptText: text in: previewSourcePresenter ] ].
 
 	self connectSearchOptions.
-	searchOptions substringBox click.
+	searchOptions substringRadioButton click.
 
-	environmentBar
-		whenAllPackagesSelectedDo: [ self searchInAllPackages ];
-		whenPackagesSelectedDo: [ self openPackageChooserDialog ].
-
-	resultTree 
-		whenSelectedItemChangedDo: [ :newResult |
-			newResult 
-				ifNil: [ self resultButtonBar disableAll ] 
-				ifNotNil: [
+	resultTree whenSelectedItemChangedDo: [ :newResult |
+			newResult ifNil: [ self resultButtonBar disableAll ] ifNotNil: [
 					newResult forFinderPreview: previewSourcePresenter.
 					self resultButtonBar enableButtonsFor: newResult ] ].
 
@@ -337,41 +326,14 @@ StFinderPresenter >> connectSearchBar [
 StFinderPresenter >> connectSearchOptions [
 
 	searchOptions
-		whenSubstringActivatedDo: [ 
-			self model useSubstring: true.
-			searchOptions 
-				disableExact;
-				disableRegex ];
-		whenSubstringDeactivatedDo: [ 
-			self model useSubstring: false.
-			searchOptions
-				enableExact;
-				enableRegex ];
-
-		whenRegexActivatedDo: [ 
-			self model useRegex: true.
-			searchOptions 
-				disableSubstring;
-				disableExact. ];
-		whenRegexDeactivatedDo: [ 
-			self model useRegex: false.
-			searchOptions 
-				enableSubstring;
-				enableExact ];
-		
+		whenSubstringActivatedDo: [ self model useSubstring: true ];
+		whenSubstringDeactivatedDo: [ self model useSubstring: false ];
+		whenRegexActivatedDo: [ self model useRegex: true ];
+		whenRegexDeactivatedDo: [ self model useRegex: false ];
+		whenExactActivatedDo: [ self model useExact: true ];
+		whenExactDeactivatedDo: [ self model useExact: false ];
 		whenCaseActivatedDo: [ self model useCase: true ];
-		whenCaseDeactivatedDo: [ self model useCase: false ];
-		
-		whenExactActivatedDo: [
-			self model useExact: true.
-			searchOptions 
-				disableSubstring;
-				disableRegex ];
-		whenExactDeactivatedDo: [ 
-			self model useExact: false.
-			searchOptions 
-				enableSubstring;
-				enableRegex ].
+		whenCaseDeactivatedDo: [ self model useCase: false ]
 ]
 
 { #category : 'layout' }
@@ -382,7 +344,6 @@ StFinderPresenter >> defaultLayout [
 		  add: (SpBoxLayout newLeftToRight
 				   spacing: 2;
 				   add: searchBar;
-				   addLast: configButton;
 				   yourself)
 		  expand: false;
 		  add: (SpBoxLayout newLeftToRight
@@ -416,23 +377,19 @@ StFinderPresenter >> initializePresenters [
 	searchBar := self instantiate: StFinderSearchBar.
 	searchBar searchModes: self model availableSearchTargets.
 
-	configButton := self newButton
-		              icon: (self iconNamed: #config);
-		              yourself.
 
 	searchOptions := self instantiate: StFinderSearchOptions.
 
 	environmentBar := self instantiate: StFinderEnvironmentBar.
-	self updateEnvironmentStatusFor: self model selectedPackages.
 
 	self initializeResultTree.
-		
+
 	previewSourcePresenter := self newCode.
 
 	resultButtonBar := self instantiate: StFinderResultButtonBar.
 
 	resultStatusBar := self newStatusBar.
-	self initializeFocus.
+	self initializeFocus
 ]
 
 { #category : 'initialization' }
@@ -460,18 +417,16 @@ StFinderPresenter >> notifySearchStarted [
 
 ]
 
-{ #category : 'private' }
-StFinderPresenter >> openPackageChooserDialog [
-	"Opens a `SpChooserPresenter` dialog to allow the user to choose the packages to search in."
+{ #category : 'accessing' }
+StFinderPresenter >> previewSourcePresenter [
 
-	((SpChooserPresenter
-		  sourceItems: self model unselectedPackages
-		  chosenItems: self model selectedPackages)
-		 sourceLabel: 'Available packages';
-		 targetLabel: 'Selected packages';
-		 openDialog)
-		title: 'Select packages for searching';
-		okAction: [ :dialog | self searchInPackages: dialog presenter chosenItems ]
+	^ previewSourcePresenter
+]
+
+{ #category : 'accessing' }
+StFinderPresenter >> previewSourcePresenter: anObject [
+
+	previewSourcePresenter := anObject
 ]
 
 { #category : 'accessing' }
@@ -487,6 +442,12 @@ StFinderPresenter >> resultTree [
 ]
 
 { #category : 'accessing' }
+StFinderPresenter >> results [
+	
+	^ self resultTree roots
+]
+
+{ #category : 'accessing' }
 StFinderPresenter >> searchBar [
 
 	^ searchBar
@@ -499,21 +460,10 @@ StFinderPresenter >> searchBy: aString [
 ]
 
 { #category : 'private' }
-StFinderPresenter >> searchInAllPackages [
-	"Selects all packages for searching."
-
-	self model selectAllPackages.
-	environmentBar activateAllPackages.
-	self updateEnvironmentStatusFor: self model selectedPackages
-]
-
-{ #category : 'private' }
 StFinderPresenter >> searchInPackages: aCollection [
 	"Sets the search environment in the model to the package names given in aCollection."
 
-	self model selectedPackagesByName: aCollection.
-	environmentBar activateChosenPackages.
-	self updateEnvironmentStatusFor: aCollection
+	environmentBar searchInPackages: aCollection
 ]
 
 { #category : 'accessing' }
@@ -567,12 +517,6 @@ StFinderPresenter >> subscribeToAnnouncements [
 	self model whenSearchStarted: [ self notifySearchStarted ].
 	self model whenSearchEnded: [ :results : time | self updateResultsWith: results time: time ].
 	self model whenSearchTypesChanged: [ self searchBar updateSearchModes ]
-]
-
-{ #category : 'updating - widgets' }
-StFinderPresenter >> updateEnvironmentStatusFor: packages [
-
-	environmentBar status: packages size asString , ' Packages selected'
 ]
 
 { #category : 'updating - widgets' }

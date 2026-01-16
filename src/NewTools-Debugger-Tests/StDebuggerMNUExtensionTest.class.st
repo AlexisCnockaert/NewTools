@@ -47,7 +47,7 @@ StDebuggerMNUExtensionTest >> tearDown [
 
 	debugger ifNotNil: [
 		debugger unsubscribeFromSystemAnnouncer.
-		debugger debuggerActionModel ifNotNil: [ :actionModel |
+		debugger debuggerClientModel ifNotNil: [ :actionModel |
 			actionModel clear.
 			actionModel session ifNotNil: [ :s | s clear ] ].
 		debugger close ].
@@ -55,6 +55,43 @@ StDebuggerMNUExtensionTest >> tearDown [
 	StTestDebuggerProvider removeSelector: #foobar.
 	self extensionTested showInDebugger: oldShowInDebuggerSetting.
 	super tearDown
+]
+
+{ #category : 'tests' }
+StDebuggerMNUExtensionTest >> testExtensionDisplaysFilteredProtocolsDNU [
+
+	self hideExtensionInDebugger.
+	debugger := StTestDebuggerProvider new debuggerWithDNUContext.
+	debugger
+		application: debugger class currentApplication;
+		initialize.
+
+	self assert: debugger debuggerClientModel isInterruptedContextDoesNotUnderstand.
+	self assert: debugger canExecuteCreateMissingMethodCommand.
+
+	self displayExtensionInDebugger.
+
+self assertCollection:  ( (debugger extensionTools first instVarNamed: #selectedProtocol) items collect: #name)  hasSameElements:  StTestDebuggerProvider protocolNames.
+self denyCollection: ( (debugger extensionTools first instVarNamed: #selectedProtocol) items collect: #name) includesAny: Object protocolNames.
+]
+
+{ #category : 'tests' }
+StDebuggerMNUExtensionTest >> testExtensionDisplaysObjectProtocolsDNU [
+
+	| extensionFilteredProtocols |
+	self hideExtensionInDebugger.
+	debugger := StTestDebuggerProvider new debuggerWithObjectClassDNUContext.
+	debugger
+		application: debugger class currentApplication;
+		initialize.
+
+	self assert: debugger debuggerClientModel isInterruptedContextDoesNotUnderstand.
+	self assert: debugger canExecuteCreateMissingMethodCommand.
+
+	self displayExtensionInDebugger.
+extensionFilteredProtocols:=( (debugger extensionTools first instVarNamed: #selectedProtocol) items ).
+self assertCollection:  (extensionFilteredProtocols collect: #name)  includesAll:  Object class protocolNames.
+self denyCollection: (extensionFilteredProtocols reject: #isExtensionProtocol thenCollect: #name) includesAny: ((Object allSuperclasses collect:#protocols) flattened reject:#isExtensionProtocol thenCollect:#name).
 ]
 
 { #category : 'tests' }
@@ -67,7 +104,7 @@ StDebuggerMNUExtensionTest >> testExtensionDisplaysWhenDNU [
 		initialize.
 
 	self assert:
-		debugger debuggerActionModel isInterruptedContextDoesNotUnderstand.
+		debugger debuggerClientModel isInterruptedContextDoesNotUnderstand.
 	self assert: debugger canExecuteCreateMissingMethodCommand.
 
 	self
@@ -93,7 +130,7 @@ StDebuggerMNUExtensionTest >> testExtensionHidesAfterDNUMethodHasBeenCreated [
 		initialize.
 
 	self assert:
-		debugger debuggerActionModel isInterruptedContextDoesNotUnderstand.
+		debugger debuggerClientModel isInterruptedContextDoesNotUnderstand.
 	self assert: debugger canExecuteCreateMissingMethodCommand.
 
 	self
@@ -111,7 +148,7 @@ StDebuggerMNUExtensionTest >> testExtensionHidesAfterDNUMethodHasBeenCreated [
 	extension := debugger extensionTools detect: [ :each |
 		             each class == self extensionTested ].
 
-	dnuMessage := debugger debuggerActionModel contextPredicate exception
+	dnuMessage := debugger debuggerClientModel contextPredicate exception
 		              message.
 
 	self assert: dnuMessage selector identicalTo: #foobar.
@@ -121,7 +158,7 @@ StDebuggerMNUExtensionTest >> testExtensionHidesAfterDNUMethodHasBeenCreated [
 
 	"Now, we shouldn't be able to create the method and the extension should be hidden."
 	self deny:
-		debugger debuggerActionModel isInterruptedContextDoesNotUnderstand.
+		debugger debuggerClientModel isInterruptedContextDoesNotUnderstand.
 	self deny: debugger canExecuteCreateMissingMethodCommand.
 	self
 		denyCollection: debugger extensionTools
@@ -138,7 +175,7 @@ StDebuggerMNUExtensionTest >> testExtensionHidesWhenNotDNU [
 		initialize.
 
 	self deny:
-		debugger debuggerActionModel isInterruptedContextDoesNotUnderstand.
+		debugger debuggerClientModel isInterruptedContextDoesNotUnderstand.
 	self deny: debugger canExecuteCreateMissingMethodCommand.
 
 	self

@@ -252,8 +252,7 @@ StFileDialogPresenter >> initializeConfirmButton: aButton [
 
 	| buttonEnableBlock |
 	self allowsChooseDirectoryIfNoFilename ifTrue: [ ^ self ].
-	buttonEnableBlock := [ :newText | 
-	                     aButton enabled: newText trimmed isNotEmpty ].
+	buttonEnableBlock := [ :newText | aButton enabled: newText trimBoth isNotEmpty ].
 	self fileNavigationSystem nameText whenTextChangedDo: buttonEnableBlock.
 	buttonEnableBlock value: self fileNavigationSystem nameText text
 ]

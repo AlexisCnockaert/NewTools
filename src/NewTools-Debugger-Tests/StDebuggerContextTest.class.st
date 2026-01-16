@@ -67,7 +67,7 @@ StDebuggerContextTest >> setUp [
 StDebuggerContextTest >> testArgumentsNodes [
 	|nodes| 
 	debuggerContext context: self contextWithArgs.
-	nodes := debuggerContext temporaryVariablesNodes select: [ :tempNode | tempNode tempVariable isArgumentVariable ].	
+	nodes := debuggerContext temporaryVariablesNodes select: [ :tempNode | tempNode isArgumentVariable ].	
 	self assert: nodes size equals: 2.
 	self assert: nodes first key equals: 'i'.
 	self assert: nodes first variableTag equals: 'arg'.
@@ -84,7 +84,7 @@ StDebuggerContextTest >> testArgumentsNodes [
 StDebuggerContextTest >> testArgumentsNodesInBlock [
 	|nodes|
 	debuggerContext context: self contextWithArgsInBlock.
-	nodes := debuggerContext temporaryVariablesNodes select: [ :tempNode | tempNode tempVariable isArgumentVariable ].	
+	nodes := debuggerContext temporaryVariablesNodes select: [ :tempNode | tempNode isArgumentVariable ].	
 	self assert: nodes size equals: 2.
 	self assert: nodes first key equals: 'a'.
 	self assert: nodes first variableTag equals: 'arg'.
@@ -202,7 +202,7 @@ StDebuggerContextTest >> testFailingAssertionNodes [
 StDebuggerContextTest >> testNoDuplicatesBetweenArgsAndTemps [
 	|nodes nodesNamesArray nodesNamesSet|
 	debuggerContext context: self contextWithArgs.
-	nodes := debuggerContext allInspectorNodes.	
+	nodes := debuggerContext allModelInspectorNodes.	
 	nodesNamesArray := (nodes collect:[:n| n key]) asSortedCollection.
 	nodesNamesSet := nodesNamesArray asSet asSortedCollection.
 	self assertCollection: nodesNamesArray equals: nodesNamesSet
@@ -254,11 +254,11 @@ StDebuggerContextTest >> testTemporaryVariablesNodes [
 	self assert: nodes first key equals: 'a'.
 	self assert: nodes first variableTag equals: 'temp. var'.	
 	self assert: nodes first rawValue equals: 0.
-	self assert: nodes first tempVariable isTempVariable.
+	self assert: nodes first isTempVariable.
 	self assert: nodes second key equals: 'b'.
 	self assert: nodes second variableTag equals: 'temp. var'.	
 	self assert: nodes second rawValue equals: nil.
-	self assert: nodes first tempVariable isTempVariable.
+	self assert: nodes first isTempVariable.
 	self deny: (nodes anySatisfy: [:n| n key = 'self'])
 ]
 

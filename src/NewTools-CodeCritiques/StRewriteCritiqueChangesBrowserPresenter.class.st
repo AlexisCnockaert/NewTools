@@ -55,12 +55,9 @@ StRewriteCritiqueChangesBrowserPresenter class >> defaultLayout [
 ]
 
 { #category : 'accessing' }
-StRewriteCritiqueChangesBrowserPresenter class >> defaultPreferredExtent [ 
+StRewriteCritiqueChangesBrowserPresenter class >> defaultPreferredExtent [
 
-	| fontWidth rowHeight |
-	fontWidth := (StandardFonts defaultFont widthOfString: 'M').
-	rowHeight := self class inputTextHeight.
-	^ (70@20) * (fontWidth @ rowHeight)
+	^ 700 @ 600
 ]
 
 { #category : 'specs' }
@@ -75,7 +72,7 @@ StRewriteCritiqueChangesBrowserPresenter >> accept [
 	self okToChange
 		ifFalse: [ ^ self ].
 	self selectedChanges isEmptyOrNil ifTrue: [ ^self ].
-	[ RBRefactoryChangeManager instance performChanges: self selectedChanges ] asJob
+	[ ReChangeManager instance performChanges: self selectedChanges ] asJob
 		title: 'Refactoring';
 		run.
 	self window delete
@@ -280,7 +277,7 @@ StRewriteCritiqueChangesBrowserPresenter >> selectedChanges: anObject [
 StRewriteCritiqueChangesBrowserPresenter >> updateChanges [
 
 	| aCompositeChange |
-	aCompositeChange := RBRefactoryChangeManager changeFactory compositeRefactoryChange.
+	aCompositeChange := ReChangeManager changeFactory compositeRefactoryChange.
 	changes do: [ :each | aCompositeChange addChange: each ].
 
 	"Later we could filter the shown changes depending on the selected scope"

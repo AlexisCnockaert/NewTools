@@ -22,14 +22,17 @@ StFinderPragmaResult >> displayIcon [
 ]
 
 { #category : 'private' }
-StFinderPragmaResult >> forFinderPreview: aSpCodePresenter [ 
+StFinderPragmaResult >> forFinderPreview: aSpCodePresenter [
 
 	self parent
-		ifNil: [ aSpCodePresenter text: 'Please select a method expanding the selected item' ]
-		ifNotNil: [ 
-			self 
-				displaySource: (self content >> self parent content) 
-				in: aSpCodePresenter ]
+		ifNil: [
+				acceptTextCallback := nil.
+				aSpCodePresenter
+					text: 'Please select a method expanding the selected item' ]
+		ifNotNil: [
+				self
+					displaySource: self content >> self parent content
+					in: aSpCodePresenter ]
 ]
 
 { #category : 'instance creation' }

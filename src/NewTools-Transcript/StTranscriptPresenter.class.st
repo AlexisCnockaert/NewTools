@@ -8,7 +8,7 @@ Class {
 	#name : 'StTranscriptPresenter',
 	#superclass : 'StPresenter',
 	#instVars : [
-		'text',
+		'textPresenter',
 		'transcript',
 		'leftToolbar',
 		'rightToolBar',
@@ -28,24 +28,24 @@ StTranscriptPresenter class >> defaultPreferredExtent [
 ]
 
 { #category : 'accessing' }
-StTranscriptPresenter class >> example [
+StTranscriptPresenter class >> exampleDefault [
 	"this example shows that we can use a different instance than the singleton."
+
 	<script>
-	
-	| t tr |
-	t := self new. 
-	tr := StThreadSafeTranscript new.
-	tr show: 'Hello Pharo I''m a new textual transcript'.
-	t transcript: tr.
-	t open. 
+	^ self new open
 ]
 
 { #category : 'accessing' }
-StTranscriptPresenter class >> exampleDefault [
+StTranscriptPresenter class >> exampleNonGlobalTranscript [
 	"this example shows that we can use a different instance than the singleton."
+
 	<script>
-	
-	self new open
+	| presenter transcript |
+	presenter := self new.
+	transcript := StThreadSafeTranscript new.
+	transcript show: 'Hello Pharo I''m a new textual transcript'.
+	presenter transcript: transcript.
+	^ presenter open
 ]
 
 { #category : 'tools registry' }
@@ -93,7 +93,7 @@ StTranscriptPresenter class >> registerToolsOn: aRegistry [
 { #category : 'actions' }
 StTranscriptPresenter >> clear [
 	
-	text clearContent
+	textPresenter clearContent
 ]
 
 { #category : 'private' }
@@ -115,15 +115,15 @@ StTranscriptPresenter >> ensureTranscriptService [
 { #category : 'actions' }
 StTranscriptPresenter >> fetchOld [ 
 
-	text appendText: transcript contents
+	textPresenter appendText: transcript contents
 ]
 
 { #category : 'initialization' }
-StTranscriptPresenter >> initialize [ 
+StTranscriptPresenter >> initialize [
 
 	super initialize.
-	self registerToAnnouncer. 
-	transcript := StThreadSafeTranscript uniqueInstance.
+	self registerToAnnouncer.
+	transcript := StThreadSafeTranscript defaultInstance.
 	keepServiceAliveStep := 0
 ]
 
@@ -145,11 +145,12 @@ StTranscriptPresenter >> initializeLeftToolbar [
 ]
 
 { #category : 'initialization' }
-StTranscriptPresenter >> initializePresenters [ 
+StTranscriptPresenter >> initializePresenters [
 
-
-	text := self newText.
-	text beEditable.
+	textPresenter := self newCode.
+	textPresenter syntaxHighlight: false.
+	textPresenter lineNumbers: false.
+	textPresenter beEditable.
 	self initializeToolbars
 	
 	
@@ -191,7 +192,7 @@ StTranscriptPresenter >> initializeWindow: aWindowPresenter [
 		whenClosedDo: [ self unregister ]
 ]
 
-{ #category : 'layout' }
+{ #category : 'accessing' }
 StTranscriptPresenter >> layout [ 
 
 	^ SpBoxLayout newTopToBottom 
@@ -199,7 +200,7 @@ StTranscriptPresenter >> layout [
 			add: leftToolbar ;
 			add: rightToolBar expand: false ) 
 			expand: false;
-		add: text;
+		add: textPresenter;
 		yourself
 ]
 
@@ -239,7 +240,7 @@ StTranscriptPresenter >> processEntries [
 		| newText |
 		newText := String streamContents: [ :stream | 
 			entries do: [ :each | stream nextPutAll: each ] ].
-		text appendText: newText ]
+		textPresenter appendText: newText ]
 ]
 
 { #category : 'registration' }
@@ -259,9 +260,9 @@ StTranscriptPresenter >> reset [
 ]
 
 { #category : 'accessing' }
-StTranscriptPresenter >> text [
+StTranscriptPresenter >> textPresenter [
 
-	^ text
+	^ textPresenter
 ]
 
 { #category : 'accessing' }

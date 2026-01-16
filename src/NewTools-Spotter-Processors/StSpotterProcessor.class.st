@@ -158,6 +158,27 @@ StSpotterProcessor >> ensureFilter [
 ]
 
 { #category : 'filtering' }
+StSpotterProcessor >> executeFullQuery [
+
+	(self query isSearchEmpty and: [ self showForEmptyQuery not ]) 
+		ifTrue: [ ^ self ].
+	
+	self configureFilter.
+	
+	results := OrderedCollection new.
+	[ self isRunning and: [ self filter atEnd ] ] 
+		whileFalse: [
+			self filter next ifNotNil: [ :aResult | 
+				self query addResult: aResult.
+				results add: aResult ] ].
+
+	(results size = self maxResults)
+		ifTrue: [ ^ self ].
+
+	self query informAllResultAmount: results size
+]
+
+{ #category : 'filtering' }
 StSpotterProcessor >> executeQuery [
 
 	(self query isSearchEmpty and: [ self showForEmptyQuery not ]) 
@@ -182,6 +203,15 @@ StSpotterProcessor >> executeQuery [
 StSpotterProcessor >> filter [ 
 	
 	^ filter ifNil: [ self ensureFilter ]
+]
+
+{ #category : 'spotter-api' }
+StSpotterProcessor >> filterAllInContext: aSpotterContext [ 
+
+	self notifyStarted: aSpotterContext.
+	self query updateFromContext: aSpotterContext.
+	self executeFullQuery.
+	self notifyEnded: aSpotterContext.
 ]
 
 { #category : 'spotter-api' }

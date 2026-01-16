@@ -30,9 +30,21 @@ StPackageTreePresenter >> areClassToDependencyNodes: aCollectionOfItem [
 ]
 
 { #category : 'testing' }
+StPackageTreePresenter >> areMethodNodes: aCollectionOfItem [
+
+	^ aCollectionOfItem allSatisfy: [ :node |  node isMethodImplementationNode ]
+]
+
+{ #category : 'testing' }
 StPackageTreePresenter >> arePackageNodes: aCollectionOfItem [
 
 	^ aCollectionOfItem allSatisfy: [ :node |  node isPackageNode ]
+]
+
+{ #category : 'testing' }
+StPackageTreePresenter >> areSubclassToPackageDependencyNodes: aCollectionOfItem [
+
+	^ aCollectionOfItem allSatisfy: [ :node | node content class inheritsFrom: StPackageDependency ]
 ]
 
 { #category : 'initialization' }

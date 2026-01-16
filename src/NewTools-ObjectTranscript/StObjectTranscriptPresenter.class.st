@@ -195,8 +195,7 @@ StObjectTranscriptPresenter >> initializeLogList [
 		addColumn: (SpStringTableColumn new
 			width: 150;
 			title: 'Timestamp';
-			evaluated:  
-				[ :each | each timestamp asLocalStringYMDHM, '.',
+			evaluated: [ :each | each timestamp asLocalStringYMDHM, '.',
 					(each timestamp nanoSecond asString copyFrom: 1 to: 3)];
 			yourself);
 		addColumn: (SpStringTableColumn new
@@ -206,7 +205,7 @@ StObjectTranscriptPresenter >> initializeLogList [
 			yourself);
 		addColumn: (SpStringTableColumn new
 			title: 'Contents';
-			evaluated:  [ :each | self printOneLineContents: each  ];
+			evaluated: [ :each | self printOneLineContents: each ];
 			yourself)
 	
 ]
@@ -253,6 +252,7 @@ StObjectTranscriptPresenter >> initializeWindow: aWindowPresenter [
 	aWindowPresenter whenOpenedDo: [ 
 		isOpened := true ].
 	aWindowPresenter whenClosedDo: [ 
+		self stopLogger.
 		self removeFromLogger ]
 ]
 

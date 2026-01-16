@@ -190,6 +190,7 @@ StPlaygroundPagesPresenter >> parent [
 StPlaygroundPagesPresenter >> selectedPage [
 
 	^ pageList selection selectedItem page
+	
 ]
 
 { #category : 'accessing - model' }

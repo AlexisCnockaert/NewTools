@@ -19,7 +19,7 @@ CavExactOnTopStrategy class >> title [
 { #category : 'positioning' }
 CavExactOnTopStrategy >> placePresenter: aWindow [
 
+	super placePresenter: aWindow.
 	aWindow position: placeHolder position.
 	aWindow extent: placeHolder extent
-	
 ]

@@ -38,26 +38,26 @@ StPlaygroundBindingsPresenter >> bindings [
 
 { #category : 'private' }
 StPlaygroundBindingsPresenter >> contextMenuActions [
-
 	^ CmCommandGroup forSpec
 		beRoot;
+		register: (StPlaygroundCommandAddBinding forSpecContext: self);
+		register: (StPlaygroundCommandModificationBinding forSpecContext: self);
 		register: (StRemoveBindingCommand forSpecContext: self);
 		register: (StToggleBindingCommand forSpecContext: self);
 		register: ((CmCommandGroup forSpecNamed: 'CRITICAL')
 			beDisplayedAsGroup;
 			register: (StRemoveAllBindingsCommand forSpecContext: self);
-			yourself);
+			yourself)
 		yourself
 ]
 
 { #category : 'layout' }
 StPlaygroundBindingsPresenter >> defaultLayout [
-
-	^ SpPanedLayout newLeftToRight
-		positionOfSlider: 30 percent;
-		add: bindingPanel;
-		add: inspectorPanel;
-		yourself
+	^ (SpPanedLayout newLeftToRight
+				positionOfSlider: 30 percent;
+				add: bindingPanel;
+				add: inspectorPanel;
+				yourself)
 ]
 
 { #category : 'initialization' }
@@ -125,10 +125,14 @@ StPlaygroundBindingsPresenter >> initializeListPanel [
 			evaluated: [ :each | self scopeNameFor: each ];
 			beSortable;
 			yourself);
+		
 	   actions: self contextMenuActions;
 		yourself.
 	
+	
 	bindingPanel presenter: bindingList
+	
+
 ]
 
 { #category : 'initialization' }
@@ -138,6 +142,7 @@ StPlaygroundBindingsPresenter >> initializePresenters [
 	self initializeInspectorPanel.
 	
 	bindingList transmitTo: inspector.
+	
 
 ]
 
@@ -180,6 +185,12 @@ StPlaygroundBindingsPresenter >> newInspectorWithTransmission: aClass on: aBindi
 	^ self 
 		instantiate: aClass 
 		on: aBinding value
+]
+
+{ #category : 'accessing' }
+StPlaygroundBindingsPresenter >> parent [
+
+	^ parent
 ]
 
 { #category : 'actions' }
@@ -250,6 +261,8 @@ StPlaygroundBindingsPresenter >> toolbarActions [
 	^ CmCommandGroup forSpec
 		beRoot;
 		register: (StRemoveAllBindingsCommand forSpecContext: self);
+		register: (StPlaygroundCommandAddBinding forSpecContext: self);
+		register: (StPlaygroundCommandModificationBinding forSpecContext: self);
 		yourself
 ]
 

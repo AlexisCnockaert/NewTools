@@ -8,7 +8,6 @@ StWindowPresenter >> openWith: aSpecLayout [
 				  self presenter class) first isKindOf: CavNullWindowPlaceHolder)
 				ifFalse: [
 						CavroisWindowManager current placePresenter: self presenter.
-
 						self initialPosition: self presenter position.
 						self initialExtent: self presenter extent ] ].
 	self isVisible ifTrue: [ self openWithLayout: aSpecLayout ]

@@ -15,11 +15,11 @@ StDebuggerMetaSession class >> forDebugger: aStDebugger [
 ]
 
 { #category : 'accessing' }
-StDebuggerMetaSession >> allInspectorNodes [
+StDebuggerMetaSession >> allModelInspectorNodes [
 	"Answer a list of attributes as nodes"
 
 	^ OrderedCollection new
-		  addAll: debugger debuggerActionModel inspectorNodes;
+		  addAll: debugger debuggerClientModel inspectorNodes;
 		  add: (StInspectorDynamicNode
 				   hostObject: debugger
 				   label: 'debugger'

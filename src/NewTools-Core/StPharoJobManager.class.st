@@ -43,7 +43,7 @@ StPharoJobManager class >> isHeadless [
 	"this is a huge hack to know if we are running with an UI or not. 
 	 I need it because this Jobs are created all around the world, and I need 
 	 a control point."
-	^ Smalltalk isInteractiveGraphic not
+	^ Smalltalk isInteractive not
 ]
 
 { #category : 'private - events' }

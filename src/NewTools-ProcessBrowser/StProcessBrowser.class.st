@@ -1,3 +1,7 @@
+"
+I am the System ProcessBrowser.
+I present the information about the running processes, allowing to auto update and to show or not the CPU consumption.
+"
 Class {
 	#name : 'StProcessBrowser',
 	#superclass : 'StPresenter',
@@ -14,13 +18,16 @@ Class {
 		'autoUpdateProcess',
 		'autoUpdateAction',
 		'autoUpdating',
-		'updatingPresenters'
+		'updatingPresenters',
+		'cpuWatcher',
+		'cpuWatcherAction'
 	],
 	#classVars : [
 		'WellKnownProcesses'
 	],
-	#category : 'NewTools-ProcessBrowser',
-	#package : 'NewTools-ProcessBrowser'
+	#category : 'NewTools-ProcessBrowser-Browsers',
+	#package : 'NewTools-ProcessBrowser',
+	#tag : 'Browsers'
 }
 
 { #category : 'accessing' }
@@ -128,6 +135,12 @@ StProcessBrowser >> buildContextToolbarActions [
 StProcessBrowser >> buildGeneralToolbarActions [
 	
 	^ SpActionGroup new
+		addActionWith: [ :action | (cpuWatcherAction := action)
+			name: 'Show CPU Usage';
+			iconName: 'search';
+			description: 'Show CPU Usage per Process';
+			beToggleButton;
+			action: [ self toggleCPUWatcher ]];
 		addActionWith: [ :action | (autoUpdateAction := action) 
 			name: 'Auto update';
 			iconName: #autoReload;
@@ -144,6 +157,7 @@ StProcessBrowser >> buildGeneralToolbarActions [
 
 { #category : 'private' }
 StProcessBrowser >> buildProcessToolbarActions [
+
 	^ SpActionGroup new
 		addActionWith: [ :action | action 
 			name: 'Terminate';
@@ -161,7 +175,7 @@ StProcessBrowser >> buildProcessToolbarActions [
 			actionEnabled: [ self selectedProcess notNil ] ];
 		addActionWith: [ :action | action 
 			name: 'Signal';
-			iconName: #play; 
+			iconName: #play;
 			description: 'Signal this process semaphore.';
 			shortcutKey: $s shift actionModifier;
 			action: [ self signalSelectedProcess ];
@@ -289,12 +303,16 @@ StProcessBrowser >> displayForContext: aContext [
 { #category : 'initialization' }
 StProcessBrowser >> displayForProcess: aProcess [
 	
+	cpuWatcher isRunning 
+		ifTrue: [ ^ '({1}) {2} {3}' format: { aProcess priority. aProcess name. cpuWatcher runningPercentageFor: aProcess } ].
+		
 	^ '({1}) {2}' format: { aProcess priority. aProcess name }
 ]
 
 { #category : 'private' }
 StProcessBrowser >> ensureAllWatchersAreClosed [
 	
+	cpuWatcher stop.
 	self isAutoUpdating ifTrue: [ self stopAutoUpdate ]
 ]
 
@@ -309,7 +327,8 @@ StProcessBrowser >> initialize [
 
 	super initialize.
 	autoUpdating := false.
-	updatingPresenters := false
+	updatingPresenters := false.
+	cpuWatcher := StCPUWatcher new
 ]
 
 { #category : 'initialization' }
@@ -523,6 +542,16 @@ StProcessBrowser >> toggleAutoUpdate: aBoolean [
 		aBoolean
 			ifTrue: [ self startAutoUpdate ]
 			ifFalse: [ self stopAutoUpdate ] ]
+]
+
+{ #category : 'actions' }
+StProcessBrowser >> toggleCPUWatcher [
+
+	cpuWatcher isRunning 
+		ifTrue: [ cpuWatcher stop ]
+		ifFalse: [ cpuWatcher start ].
+		
+	cpuWatcherAction presenter state: cpuWatcher isRunning
 ]
 
 { #category : 'initialization' }

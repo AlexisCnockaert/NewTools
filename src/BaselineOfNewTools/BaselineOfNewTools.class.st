@@ -50,7 +50,11 @@ BaselineOfNewTools >> baseline: spec [
 			"playground"
 			package: 'NewTools-Playground' with: [ spec requires: #( 'NewTools-Core'  'NewTools-Inspector' ) ];
 			package: 'NewTools-Playground-Tests' with: [ spec requires: #( 'NewTools-Playground' ) ];
-		
+			
+			"profStef"
+			package: 'ProfStef-Core' with: [ spec requires: #( 'NewTools-Playground' ) ];
+			package: 'ProfStef-Tests' with: [ spec requires: #( 'ProfStef-Core' ) ];
+					
 			"closed windows"
 			package: 'NewTools-WindowManager';
 			package: 'NewTools-WindowManager-Tests' with: [  spec requires: #( 'NewTools-Core' 'NewTools-WindowManager') ];
@@ -68,6 +72,8 @@ BaselineOfNewTools >> baseline: spec [
 			package: 'NewTools-Spotter-Processors-Tests' with: [ spec requires: #( 'NewTools-Spotter-Processors' ) ];
 			package: 'NewTools-Spotter-Tests' with: [ spec requires: #( 'NewTools-Spotter' ) ];
 			package: 'NewTools-Morphic-Spotter' with: [ spec requires: #( 'NewTools-Morphic' ) ];
+			package: 'NewTools-Pulse' with: [ spec requires: #( 'NewTools-Spotter' ) ];
+			package: 'NewTools-Pulse-Tests' with: [ spec requires: #( 'NewTools-Pulse' ) ];
 	
 			"file browser"
 			package: 'NewTools-FileBrowser' with: [ spec requires: #( 'NewTools-Core' ) ];
@@ -89,22 +95,19 @@ BaselineOfNewTools >> baseline: spec [
 			package: 'NewTools-FontChooser' with: [ spec requires: #( 'NewTools-Core' ) ];
 			package: 'NewTools-FontChooser-Tests' with: [ spec requires: #( 'NewTools-FontChooser' ) ];
 			package: 'NewTools-SpTextPresenterDecorators';
-			package: 'NewTools-Debugger-Breakpoints-Tools' with: [ spec requires: #( 'NewTools-Inspector' ) ];
 	
 			"Debug points"
 			package: 'NewTools-DebugPointsBrowser' with: [spec requires: #( 'NewTools-Core' 'NewTools-SpTextPresenterDecorators' )];
-			package: 'NewTools-DebugPointsBrowser-Tests' with: [ spec requires: #( 'NewTools-DebugPointsBrowser' ) ];
 			package: 'NewTools-ObjectCentricDebugPoints' with: [ spec requires: #( 'NewTools-DebugPointsBrowser' 'NewTools-Inspector' 'NewTools-Debugger' )];
 			package: 'NewTools-ProjectLoader' with: [ spec requires: #( 'NewTools-Core') ] ;
 			package: 'NewTools-ProjectLoader-Microdown';
 	
-			"Object-centric breakpoints"
-			package: 'NewTools-ObjectCentricBreakpoints'  with: [ spec requires: #( 'NewTools-Inspector' 'NewTools-Debugger-Breakpoints-Tools') ] ;
 	
 			"Sindarin"
 			package: 'NewTools-Sindarin-Commands';
 			package: 'NewTools-Sindarin-Commands-Tests' with: [ spec requires: #( 'NewTools-Sindarin-Commands' 'Sindarin' ) ];
 			package: 'NewTools-Sindarin-Tools' with: [ spec requires: #( 'NewTools-Sindarin-Commands' 'Sindarin' ) ];
+			package: 'NewTools-Sindarin-Scripts' with: [ spec requires: #( 'NewTools-Sindarin-Commands' 'Sindarin' ) ];
 	
 			"package: 'NewTools-Sindarin-ProcessInspector' with: [ spec requires: #('NewTools-Sindarin-Commands' 'Sindarin') ];""Debugger Selector"
 			package: 'NewTools-DebuggerSelector' with: [ spec requires: #( 'NewTools-SpTextPresenterDecorators' ) ];
@@ -116,8 +119,8 @@ BaselineOfNewTools >> baseline: spec [
 			
 			"Window Profile"
 			package: 'NewTools-Window-Profiles' with: [ spec requires: #('NewTools-Core')] ;
-			
-			
+			package: 'NewTools-Window-Profiles-Tests' with: [spec requires: #( 'NewTools-Core' 'NewTools-Window-Profiles' ) ]; 
+	
 			"Fuel"
 			package: 'NewTools-Debugger-Fuel';
 			package: 'NewTools-Debugger-Fuel-Tests' with: [ spec requires: #( 'NewTools-Debugger-Fuel' ) ];
@@ -130,6 +133,10 @@ BaselineOfNewTools >> baseline: spec [
 			
 			"Profiler"
 			package: 'NewTools-ProfilerUI'  with: [ spec requires: #('NewTools-Core' 'NewTools-SpTextPresenterDecorators') ];
+			
+			"Epicea"
+			package: 'NewTools-Epicea' with: [ spec requires: #('NewTools-Core')  ];
+			package: 'NewTools-Epicea-Tests' with: [ spec requires: #('NewTools-Epicea')  ];
 			
 			"Scopes Editor"
 			package: 'NewTools-Scopes';
@@ -171,15 +178,16 @@ BaselineOfNewTools >> baseline: spec [
 			group: 'Core' with: #( 'NewTools-Core' 'NewTools-Core-Tests' 'NewTools-Morphic' );
 
 			group: 'Playground' with: #( 'NewTools-Playground' 'NewTools-Playground-Tests' );
+			
+			group: 'ProfStef' with: #( 'ProfStef-Core' 'ProfStef-Tests' );
 
 			group: 'Inspector' with: #( 'Core' 'NewTools-Inspector' 'NewTools-Inspector-Tests' );
 
 			group: 'ClosedWindows' with: #( 'Core' 'NewTools-WindowManager' 'NewTools-WindowManager-Tests' );
 			
-			group: 'Profile' with: #( 'NewTools-Window-Profiles' );
+			group: 'Profile' with: #( 'NewTools-Window-Profiles' 'NewTools-Window-Profiles-Tests' );
 			
 			group: 'Transcript' with: #( 'Core' 'NewTools-Transcript-Tests' 'NewTools-ObjectTranscript' );
-			
 			
 			group: 'Debugger' with: #( 
 					 	'Core' 
@@ -189,18 +197,15 @@ BaselineOfNewTools >> baseline: spec [
 					 	'NewTools-Debugger'
 
 						'NewTools-Debugger-Morphic'
-				    	'NewTools-ObjectCentricBreakpoints'
 				    	'NewTools-Sindarin-Tools' 
 
 					 	'NewTools-Sindarin-Commands'
 				    	'NewTools-Sindarin-Commands-Tests'
-				    	'NewTools-Debugger-Breakpoints-Tools'
 				    	'NewTools-Debugger-Tests' 
 					 	'NewTools-Debugger-Fuel'
 				    	'NewTools-Debugger-Fuel-Tests' 
 					 	'NewTools-Utils'
 						'NewTools-DebugPointsBrowser'
-						'NewTools-DebugPointsBrowser-Tests'
 						'NewTools-ObjectCentricDebugPoints' );
 
 			group: 'Spotter' with: #( 
@@ -209,7 +214,9 @@ BaselineOfNewTools >> baseline: spec [
 				   		'NewTools-Spotter' 
 						'NewTools-Spotter-Extensions'
 				   		'NewTools-Spotter-Tests' 
-						'NewTools-Spotter-Processors-Tests' );
+						'NewTools-Spotter-Processors-Tests'
+						'NewTools-Pulse'
+						'NewTools-Pulse-Tests' );
 
 			group: 'SystemReporter' with: #( 'Core' 'NewTools-SystemReporter' );
 
@@ -265,31 +272,14 @@ BaselineOfNewTools >> baseline: spec [
 			group: 'ColorPickerGroup' with: #('ColorPicker' 'ColorPicker-Tests');
 			group: 'ProcessBrowser' with: #('NewTools-ProcessBrowser');
 			group: 'DependencyAnalyser' with: #('NewTools-DependencyAnalyser-UI' 'NewTools-DependencyAnalyser-Tests');
+			group: 'Epicea' with: #( 'NewTools-Epicea' 'NewTools-Epicea-Tests' );
 			
 
-			group: 'default' with: #( 
-			         'Profile'
-						'Playground'
-						'Transcript'
-						'Inspector' 
-						'ClosedWindows'
-						'CritiqueBrowser' 
-						'Debugger'
-				   		'SystemReporter' 
-						'FontChooser' 
-						'Methods'
-				   		'Spotter'
-		            	'RewriterTools'
-						'ScopesEditor'
-						'FileBrowser'
-						'Finder'
-						'Profiler'
-						'SettingsBrowser'
-						'WelcomeBrowser'
-						'ShortcutsBrowser'
-						'ColorPickerGroup'
-						'ProcessBrowser'
-						'DependencyAnalyser' ) ]
+			group: 'default'
+				with:
+					#( 'Profile' 'Epicea' 'Playground' 'ProfStef' 'Transcript' 'Inspector' 'ClosedWindows' 'CritiqueBrowser' 'Debugger' 'SystemReporter' 'FontChooser'
+					   'Methods' 'Spotter' 'RewriterTools' 'ScopesEditor' 'FileBrowser' 'Finder' 'Profiler' 'SettingsBrowser' 'WelcomeBrowser' 'ShortcutsBrowser'
+					   'ColorPickerGroup' 'ProcessBrowser' 'DependencyAnalyser' )  ]
 ]
 
 { #category : 'external projects' }
@@ -308,7 +298,7 @@ BaselineOfNewTools >> graphAlgorithms: spec [
 	spec
 		baseline: 'AIGraphAlgorithms'
 		with: [
-		spec repository: 'github://pharo-ai/graph-algorithms:v1.2.7/src' ]
+		spec repository: 'github://pharo-ai/graph-algorithms:v1.2.10/src' ]
 ]
 
 { #category : 'actions' }

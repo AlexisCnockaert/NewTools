@@ -14,7 +14,7 @@ Class {
 	#tag : 'UI'
 }
 
-{ #category : 'example' }
+{ #category : 'examples' }
 StOpenFilePresenter class >> complexExampleAdaptivePreviewer [
 
 	<example>
@@ -39,13 +39,13 @@ StOpenFilePresenter class >> complexExampleAdaptivePreviewer [
 
 	presenter columns: { StFileBrowserCreationDateColumn }.
 
-	presenter inspect.
+	"presenter inspect."
 	presenter openModal.
 	presenter resetBookmarks.
 	^ presenter confirm
 ]
 
-{ #category : 'example' }
+{ #category : 'examples' }
 StOpenFilePresenter class >> complexExampleTextPreviewer [
 
 	<example>
@@ -101,12 +101,18 @@ StOpenFilePresenter class >> exampleModal [
 	^ self chooseModalAndInspect
 ]
 
-{ #category : 'example' }
+{ #category : 'examples' }
 StOpenFilePresenter class >> examplePreviewer [
 
 	self new
 		previewer: StFileBrowserInspectPreviewer new;
 		open
+]
+
+{ #category : 'hooks' }
+StOpenFilePresenter >> allowsChooseDirectoryIfNoFilename [
+
+	^ false
 ]
 
 { #category : 'testing' }
@@ -118,5 +124,6 @@ StOpenFilePresenter >> isMultipleSelection [
 
 { #category : 'hooks' }
 StOpenFilePresenter >> windowTitle [
-	^ 'Select File To Open'
+
+	^ title ifNil: ['Select File To Open']
 ]

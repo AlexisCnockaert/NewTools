@@ -19,9 +19,24 @@ StPlaygroundInteractionModel >> addBinding: aBinding [
 ]
 
 { #category : 'binding' }
+StPlaygroundInteractionModel >> addBindingNamed: aString with: value [
+	|aBinding|
+	
+	aBinding := WorkspaceVariable key: aString asSymbol value: value.
+
+	self addBinding: aBinding.
+]
+
+{ #category : 'binding' }
 StPlaygroundInteractionModel >> addBindings: aCollection [
 
 	aCollection do: [ :each | self addBinding: each ]
+]
+
+{ #category : 'binding' }
+StPlaygroundInteractionModel >> addBindingsByDictionary: aDictionary [
+	aDictionary keysAndValuesDo: [ :key :value | self addBinding: (WorkspaceVariable key: key value: value) ].
+
 ]
 
 { #category : 'accessing' }
@@ -102,6 +117,12 @@ StPlaygroundInteractionModel >> makeBindingShared: aBinding [
 	
 	self removeBinding: aBinding.
 	self application addSharedBinding: aBinding
+]
+
+{ #category : 'accessing' }
+StPlaygroundInteractionModel >> removeBindingNamed: aKey [
+	
+	self bindings removeKey: aKey asSymbol.
 ]
 
 { #category : 'accessing' }

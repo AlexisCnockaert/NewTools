@@ -2,7 +2,7 @@ Extension { #name : 'ToolShortcutsCategory' }
 
 { #category : '*NewTools-Spotter' }
 ToolShortcutsCategory >> openSpotter [
-
+"
 	<shortcut>
 	^ KMKeymap shortcut: Character cr shift action: [ :target | 
 		  | selection spot |
@@ -10,5 +10,5 @@ ToolShortcutsCategory >> openSpotter [
 			spot := (self tools toolNamed: #spotter).
 		  ( spot insertsSelection and: [ selection isNotNil ])
 			  ifTrue: [ spot  openWithText: selection ]
-			  ifFalse: [ spot open ] ]
+			  ifFalse: [ spot open ] ] "
 ]

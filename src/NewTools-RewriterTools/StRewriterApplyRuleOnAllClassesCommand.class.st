@@ -33,18 +33,19 @@ StRewriterApplyRuleOnAllClassesCommand class >> defaultName [
 StRewriterApplyRuleOnAllClassesCommand >> execute [
 
 	| changes ruleHolder |
-	self application
-		confirm: 'This process can take between 1 and 2 minutes.'.
+	self application confirm:
+		'This process can take between 1 and 2 minutes.'.
 
 	ruleHolder := StRewriterRuleHolder
-		lhs: self context lhs
-		rhs: self context rhs
-		isForMethod: self context isRuleForMethod.
+		              lhs: self context lhs
+		              rhs: self context rhs
+		              isForMethod: self context isRuleForMethod.
 
 	changes := StRewriterAbstractApplier defaultEngineApplier
-		calculateAllChangesForRules: (OrderedCollection with: ruleHolder).
+		           calculateAllChangesForRules:
+		           (OrderedCollection with: ruleHolder).
 
-	^ (StChangesBrowserPresenter
-			newApplication: self application
-			model: changes) open
+	^ ((self application toolNamed: #changesBrowser)
+		   newApplication: self application
+		   model: changes) open
 ]

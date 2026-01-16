@@ -18,7 +18,7 @@ Class {
 		'worker'
 	],
 	#classVars : [
-		'UniqueInstance'
+		'Default'
 	],
 	#category : 'NewTools-Transcript',
 	#package : 'NewTools-Transcript'
@@ -31,6 +31,13 @@ StThreadSafeTranscript class >> createTestingInstance [
 	^ super new.
 ]
 
+{ #category : 'instance creation' }
+StThreadSafeTranscript class >> defaultInstance [
+
+	<script>
+	^ Default ifNil: [ Default := super new ]
+]
+
 { #category : 'declare' }
 StThreadSafeTranscript class >> install [
 
@@ -39,22 +46,16 @@ StThreadSafeTranscript class >> install [
 
 { #category : 'declare' }
 StThreadSafeTranscript class >> installThreadSafeAsTranscript [
+
 	<script>
-
-	Smalltalk globals at: #Transcript put: self uniqueInstance
-]
-
-{ #category : 'instance creation' }
-StThreadSafeTranscript class >> new [
-
-	self error: 'You cannot create instances of this class. Use Singleton instead'
+	Smalltalk globals at: #Transcript put: self defaultInstance
 ]
 
 { #category : 'declare' }
 StThreadSafeTranscript class >> reset [
 	<script>
 
-	UniqueInstance := nil
+	Default := nil
 ]
 
 { #category : 'icons' }
@@ -66,10 +67,9 @@ StThreadSafeTranscript class >> taskbarIconName [
 
 { #category : 'instance creation' }
 StThreadSafeTranscript class >> uniqueInstance [
-	
-	<script>
-	^ UniqueInstance ifNil: [
-		UniqueInstance := super new ]
+
+	self deprecated: 'Use #defaultInstance' transformWith: '`@rcv uniqueInstance' -> '`@rcv defaultInstance'.
+	^ self defaultInstance
 ]
 
 { #category : 'streaming' }

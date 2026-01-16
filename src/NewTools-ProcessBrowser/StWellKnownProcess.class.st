@@ -11,8 +11,9 @@ Class {
 		'allowStop',
 		'allowDebug'
 	],
-	#category : 'NewTools-ProcessBrowser',
-	#package : 'NewTools-ProcessBrowser'
+	#category : 'NewTools-ProcessBrowser-Browsers',
+	#package : 'NewTools-ProcessBrowser',
+	#tag : 'Browsers'
 }
 
 { #category : 'instance creation' }

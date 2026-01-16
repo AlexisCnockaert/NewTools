@@ -112,7 +112,7 @@ StQuery >> updateFromContext: aSpotterContext [
 
 	modifiers removeAll.
 	texts := (aSpotterContext search ifNil:[ '' ]) trimBoth.
-	textParts := texts substrings: { Character space. Character tab }.
+	textParts := texts asString substrings: { Character space. Character tab }.
 	query := ''.
 	
 	textParts do: [ :aPart | 

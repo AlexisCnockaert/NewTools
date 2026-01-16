@@ -39,12 +39,6 @@ StOpenDirectoryPresenter class >> navigationSystemClass [
 	^ StDirectoryNavigationSystemPresenter 
 ]
 
-{ #category : 'hooks' }
-StOpenDirectoryPresenter >> allowsChooseDirectoryIfNoFilename [
-
-	^ true
-]
-
 { #category : 'accessing' }
 StOpenDirectoryPresenter >> selectedEntry [
 
@@ -56,5 +50,6 @@ StOpenDirectoryPresenter >> selectedEntry [
 
 { #category : 'hooks' }
 StOpenDirectoryPresenter >> windowTitle [
-	^ 'Select Directory To Open'
+
+	^ title ifNil: [ 'Select Directory To Open' ]
 ]

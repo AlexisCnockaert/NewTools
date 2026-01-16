@@ -18,7 +18,6 @@ Class {
 		'suggestionList',
 		'protocolNameField',
 		'concernedClass',
-		'newProtocolButton',
 		'selectedProtocolName'
 	],
 	#category : 'NewTools-Core-Calypso',
@@ -30,18 +29,12 @@ Class {
 StProtocolNameChooserPresenter class >> exampleConfiguringPresenter [
 	<example>
 
-	self requestProtocolNameConfiguring: [ :presenter :dialog |
-		presenter
-			concernedClass: self class; "Giving the concerned class can allow some customizations such as knowing if we should suggest instance or class side protocols"
-			protocolName: 'ac'.
-		dialog title: 'Updated title' ]
-]
-
-{ #category : 'instance creation' }
-StProtocolNameChooserPresenter class >> open [
-
-	<script>
-	self new open
+	(self newApplication: StPharoApplication current)
+		requestProtocolNameConfiguring: [ :presenter :dialog |
+			presenter
+				concernedClass: self class; "Giving the concerned class can allow some customizations such as knowing if we should suggest instance or class side protocols"
+				protocolName: 'ac'.
+			dialog title: 'Updated title' ]
 ]
 
 { #category : 'instance creation' }
@@ -56,20 +49,9 @@ StProtocolNameChooserPresenter class >> requestProtocolName [
 StProtocolNameChooserPresenter class >> requestProtocolNameConfiguring: aBlock [
 	"I request a protocol name through a dialog and signal a CmdCommandAborted in case the provided protocol is empty or an extension name.
 	I allow the user to configure the presenter or the dialog via a configuration block."
-	| protocolName presenter dialog |
-
-	dialog := (presenter := self new) asBlockedDialogWindow.
-	aBlock cull: presenter cull: dialog.
-	presenter selectProtocolName.
-	dialog open.
 	
-	dialog cancelled ifTrue: [ CmCommandAborted signal ].
-	protocolName := presenter selectedProtocolName ifNil: [ CmCommandAborted signal ].	
-	(protocolName beginsWith: '*') ifTrue: [
-		UIManager default inform: 'Star is forbidden for protocol name since this is used for method extensions.'.
-		^ CmCommandAborted signal ].
-	
-	^ protocolName
+	self flag: #TODO. "Remove once integrated changes in Pharo14"
+	^ (self newApplication: StPharoApplication current) requestProtocolNameConfiguring: aBlock
 ]
 
 { #category : 'accessing' }
@@ -93,9 +75,7 @@ StProtocolNameChooserPresenter >> connectPresenters [
 	protocolNameField whenTextChangedDo: [ self updatePresenter ].
 	protocolNameField whenSubmitDo: [ :aString | self doAcceptFromTextInput  ].
 	
-	suggestionList whenActivatedDo: [ self doAcceptFromList ].
-	
-	newProtocolButton action: [ self doAcceptFromTextInput ]
+	suggestionList whenActivatedDo: [ self doAcceptFromList ]
 ]
 
 { #category : 'layout' }
@@ -107,7 +87,6 @@ StProtocolNameChooserPresenter >> defaultLayout [
 		add: (SpBoxLayout newLeftToRight
 				spacing: 3;
 				add: protocolNameField expand: true;
-				add: newProtocolButton expand: false;
 				yourself)
 			expand: false;
 		yourself
@@ -123,15 +102,15 @@ StProtocolNameChooserPresenter >> doAcceptFromList [
 { #category : 'private - actions' }
 StProtocolNameChooserPresenter >> doAcceptFromTextInput [
 	
-	selectedProtocolName := suggestionList selectedItem 
-		ifNil: [  protocolNameField text. ].
+	selectedProtocolName := protocolNameField text.
 	self withWindowDo: [ :w | w beOk; close ]
 ]
 
 { #category : 'initialization' }
 StProtocolNameChooserPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 
-	super initializeDialogWindow: aDialogWindowPresenter
+	super initializeDialogWindow: aDialogWindowPresenter.
+	aDialogWindowPresenter okAction: [ self doAcceptFromTextInput ]
 ]
 
 { #category : 'initialization' }
@@ -143,12 +122,6 @@ StProtocolNameChooserPresenter >> initializePresenters [
 
 	protocolNameField := self newTextInput.
 	protocolNameField placeholder: 'Protocol name (e.g. accessing)'.
-
-	newProtocolButton := self newButton.
-	newProtocolButton
-		addStyle: 'small';
-		icon: (self iconNamed: #add);
-		help: 'Create a new protocol with the content of the input field if this protocol is not in the list'.
 
 	self initializeProtocolNameField
 ]
@@ -183,12 +156,6 @@ StProtocolNameChooserPresenter >> initializeWindow: aWindowPresenter [
 ]
 
 { #category : 'private - accessing' }
-StProtocolNameChooserPresenter >> newProtocolButton [
-
-	^ newProtocolButton
-]
-
-{ #category : 'private - accessing' }
 StProtocolNameChooserPresenter >> protocolName [
 	^ protocolNameField text asSymbol
 ]
@@ -216,6 +183,34 @@ StProtocolNameChooserPresenter >> protocolsToSuggest [
 	^ suggestedProtocols
 ]
 
+{ #category : 'instance creation' }
+StProtocolNameChooserPresenter >> requestProtocolName [
+	"See comment of StProtocolNameChooser class>>#requestProtocolNameConfiguring:"
+
+	^ self requestProtocolNameConfiguring: [ :presenter :dialog |  ]
+]
+
+{ #category : 'instance creation' }
+StProtocolNameChooserPresenter >> requestProtocolNameConfiguring: aBlock [
+	"I request a protocol name through a dialog and signal a CmdCommandAborted in case the provided protocol is empty or an extension name.
+	I allow the user to configure the presenter or the dialog via a configuration block."
+	| protocolName dialog |
+	
+	dialog := self asBlockedDialogWindow.
+	aBlock cull: self cull: dialog.
+	self selectProtocolName.
+	
+	dialog open.
+	dialog isCancelled ifTrue: [ CmCommandAborted signal ].
+	
+	protocolName := self selectedProtocolName ifNil: [ CmCommandAborted signal ].
+	(protocolName beginsWith: '*') ifTrue: [
+		self inform: 'Star is forbidden for protocol name since this is used for method extensions.'.
+		^ CmCommandAborted signal ].
+
+	^ protocolName
+]
+
 { #category : 'accessing' }
 StProtocolNameChooserPresenter >> selectProtocolName [
 
@@ -237,9 +232,6 @@ StProtocolNameChooserPresenter >> selectedProtocolName [
 { #category : 'initialization' }
 StProtocolNameChooserPresenter >> updatePresenter [
 
-	newProtocolButton enabled: self protocolName isNotEmpty.
-
 	suggestionList
-		items: self protocolsToSuggest;
-		selectFirst
+		items: self protocolsToSuggest
 ]

@@ -41,7 +41,8 @@ StFinderSelectorResult >> displayIcon [
 StFinderSelectorResult >> forFinderPreview: aSpCodePresenter [ 
 
 	self parent
-		ifNil: [ 
+		ifNil: [
+			acceptTextCallback := nil.
 			aSpCodePresenter 
 				beForScripting;
 				text: 'Please select a method implementation expanding the selected item' ]

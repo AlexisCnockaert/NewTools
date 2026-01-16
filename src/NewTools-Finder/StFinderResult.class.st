@@ -13,7 +13,8 @@ Class {
 		'content',
 		'parent',
 		'children',
-		'application'
+		'application',
+		'acceptTextCallback'
 	],
 	#category : 'NewTools-Finder-Result',
 	#package : 'NewTools-Finder',
@@ -29,6 +30,13 @@ StFinderResult class >> newFor: aCompiledMethod [
 		ifFound: [ : subclass | subclass new content: aCompiledMethod ]
 		ifNone: [ self error: 'No matching result for ' , aCompiledMethod selector ]
 
+]
+
+{ #category : 'visiting' }
+StFinderResult >> acceptText: aString in: aSpCodePresenter [ 
+	
+	acceptTextCallback ifNil: [ ^ nil ].
+	^ acceptTextCallback	value: aString value: aSpCodePresenter
 ]
 
 { #category : 'adding' }
@@ -69,6 +77,18 @@ StFinderResult >> children: anObject [
 	children := anObject
 ]
 
+{ #category : 'compiling' }
+StFinderResult >> compileMethodWithSource: text in: aSpCodePresenter [
+
+	| selectedClass |
+	selectedClass := aSpCodePresenter behavior.
+
+	^ selectedClass
+		  compile: text
+		  classified: aSpCodePresenter interactionModel method protocol name
+		  notifying: nil
+]
+
 { #category : 'accessing' }
 StFinderResult >> content [
 
@@ -90,7 +110,9 @@ StFinderResult >> displayIcon [
 { #category : 'displaying' }
 StFinderResult >> displaySource: aCompiledMethod in: aSpCodePresenter [
 
-	aSpCodePresenter 
+	acceptTextCallback := [ :text :codePresenter |
+		self compileMethodWithSource: text in: codePresenter ].
+	aSpCodePresenter
 		beForMethod: aCompiledMethod;
 		text: aCompiledMethod sourceCode
 ]

@@ -253,28 +253,42 @@ StDependencyTreePresenter >> initializePresenters [
 	super initializePresenters.
 	packageLabel := self newLabel label: 'Analysis of packages'.
 	textPackageField := self newTextInput
-		placeholder: 'Enter a package name';
-		entryCompletion: self packagesEntryCompletion.
+		                    placeholder: 'Enter a package name';
+		                    entryCompletion: self packagesEntryCompletion.
 	self initializeButtons.
-	
-	tree actionsWith: [ :group | group 
-		addActionWith: [ :action | action 
-			name: 'Browse scoped dependencies';
-			actionEnabled: [ self selectedPackageNames isNotEmpty ];
-			action: [
-				 (StPackageDependenciesPresenter onPackagesNamed: self selectedPackageNames) 
-					application: self application;
-					open ] ];
-		addActionWith: [ :action | action 
-			name: 'Find cycles among packages';
-			action: [
-				(StCycleDetectionPresenter onPackagesNamed: self selectedPackageNames)
-					application: self application;
-					open ] ];
-		addActionWith: [ :action | action 
-			name: 'Browse dependencies from class';
-			actionEnabled: [ self areClassToDependencyNodes: self selectedItemsFromTree ];
-			action: [  self openTreeFor: self selectedNames ] ] ]
+
+	tree actionsWith: [ :group |
+			group
+				addActionWith: [ :action |
+						action
+							name: 'Browse scoped dependencies';
+							actionEnabled: [
+									(self areSubclassToPackageDependencyNodes: self selectedItemsFromTree)
+										ifTrue: [ self selectedPackageNames isNotEmpty ]
+										ifFalse: [ false ] ];
+							action: [
+									(StPackageDependenciesPresenter onPackagesNamed: self selectedPackageNames)
+										application: self application;
+										open ] ];
+				addActionWith: [ :action |
+						action
+							name: 'Find cycles among packages';
+							action: [
+									(StCycleDetectionPresenter onPackagesNamed: self selectedPackageNames)
+										application: self application;
+										open ] ];
+				addActionWith: [ :action |
+						action
+							name: 'Browse dependencies from class';
+							actionEnabled: [ self areClassToDependencyNodes: self selectedItemsFromTree ];
+							action: [ self openTreeFor: self selectedNames ] ];
+				addActionWith: [ :action |
+						action
+							name: 'Select this package as the right dependency';
+							actionEnabled: [ self areMethodNodes: self selectedItemsFromTree ];
+							action: [
+									(TheManifestBuilder of: self selectedItemsFromTree first packageUnderAnalysis packageManifest)
+										addManuallyResolvedDependency: self selectedItemsFromTree first content package name ] ] ]
 ]
 
 { #category : 'accessing' }
@@ -325,22 +339,24 @@ StDependencyTreePresenter >> relationGraph [
 
 { #category : 'accessing' }
 StDependencyTreePresenter >> relationGraph: anObject [
+
 	| warnings alertMessage |
 	warnings := Set new.
 	relationGraph := anObject.
 
 	[ self relationGraph build ]
 		on: StPotentialOutDatedDependencyWarning
-		do: [ :ex | warnings add: ex. ex resume ].
+		do: [ :ex |
+				warnings add: ex.
+				ex resume ].
 	self buildRoots.
-	alertMessage := 'Some dependencies declared in ' ,
-		self relationGraph packagesName first,
-		' Manifest as manuallyResolvedDependencies not detected as a dependency! Please check :' , String cr.
-	warnings 	ifNotEmpty: [
-		self application newInform
-			label: alertMessage , (String cr join: (warnings collect: #dependency ));
-			title: 'Potential outdated dependencies';
-			openModal ]
+	alertMessage := 'Some dependencies declared in ' , self relationGraph packagesName first
+	                , ' Manifest as manuallyResolvedDependencies not detected as a dependency! Please check :' , String cr.
+	warnings ifNotEmpty: [
+			self application newInform
+				message: alertMessage , (String cr join: (warnings collect: #dependency));
+				title: 'Potential outdated dependencies';
+				openModal ]
 ]
 
 { #category : 'actions' }
