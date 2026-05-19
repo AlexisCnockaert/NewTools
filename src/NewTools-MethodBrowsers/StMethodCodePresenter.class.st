@@ -15,8 +15,24 @@ Class {
 { #category : 'commands' }
 StMethodCodePresenter class >> buildCommandsGroupWith: presenter forRoot: aCmCommandsGroup [
 
-	presenter methodBrowser ifNotNil: [ aCmCommandsGroup register: presenter refactoringCommandsGroup ].
+	presenter methodBrowser ifNotNil: [
+			aCmCommandsGroup register: presenter refactoringCommandsGroup.
+			aCmCommandsGroup register: presenter debugCommandsGroup ].
 	super buildCommandsGroupWith: presenter forRoot: aCmCommandsGroup
+]
+
+{ #category : 'intialization' }
+StMethodCodePresenter >> debugCommandsGroup [
+
+	| group |
+	group := (CmCommandGroup named: 'Debug Points') asSpecGroup
+		         beDisplayedAsSubMenu;
+		         iconName: #smallDebug;
+		         yourself.
+	{
+		StAddBreakPointCommand.
+		StAddWatchDebugPointCommand } do: [ :cmdClass | group register: (cmdClass forSpecContext: self methodBrowser) ].
+	^ group
 ]
 
 { #category : 'accessing' }
